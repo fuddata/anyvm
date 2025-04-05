@@ -18,9 +18,18 @@ func main() {
 	// Initialize cloud manager
 	cm := providers.NewCloudManager()
 
-	cm.RegisterProvider("azure", providers.NewAzureProvider(cfg))
-	cm.RegisterProvider("aws", providers.NewAWSProvider(cfg))
-	cm.RegisterProvider("gcp", providers.NewGCPProvider(cfg))
+	azureProvider, azureEnable := providers.NewAzureProvider(cfg)
+	if azureEnable {
+		cm.RegisterProvider("azure", azureProvider)
+	}
+	awsProvider, awsEnable := providers.NewAWSProvider(cfg)
+	if awsEnable {
+		cm.RegisterProvider("aws", awsProvider)
+	}
+	gcpProvider, gcpEnable := providers.NewGCPProvider(cfg)
+	if gcpEnable {
+		cm.RegisterProvider("gcp", gcpProvider)
+	}
 
 	// Set up router
 	r := mux.NewRouter()

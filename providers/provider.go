@@ -1,6 +1,10 @@
 package providers
 
-import "github.com/fuddata/anyvm/models"
+import (
+	"fmt"
+
+	"github.com/fuddata/anyvm/models"
+)
 
 type CloudProvider interface {
 	ListVMs() ([]models.VM, error)
@@ -17,9 +21,8 @@ func NewCloudManager() *CloudManager {
 }
 
 func (cm *CloudManager) RegisterProvider(name string, provider CloudProvider) {
-	if provider != nil {
-		cm.providers[name] = provider
-	}
+	fmt.Printf("Registering provider %s\r\n", name)
+	cm.providers[name] = provider
 }
 
 func (cm *CloudManager) GetProvider(name string) CloudProvider {

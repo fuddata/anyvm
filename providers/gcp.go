@@ -16,14 +16,14 @@ type GCPProvider struct {
 	projectID string
 }
 
-func NewGCPProvider(cfg *config.Config) *GCPProvider {
+func NewGCPProvider(cfg *config.Config) (*GCPProvider, bool) {
 	ctx := context.Background()
 	client, err := compute.NewService(ctx, option.WithCredentialsFile(cfg.GCPCreds.CredentialsFile))
 	if err != nil {
 		fmt.Printf("Failed to active GCP provider. Will continue without it. Error: %v\r\n", err)
-		return nil
+		return nil, false
 	}
-	return &GCPProvider{client: client, projectID: cfg.GCPCreds.ProjectID}
+	return &GCPProvider{client: client, projectID: cfg.GCPCreds.ProjectID}, true
 }
 
 func (p *GCPProvider) ListVMs() ([]models.VM, error) {

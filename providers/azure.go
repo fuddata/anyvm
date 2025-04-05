@@ -15,11 +15,11 @@ type AzureProvider struct {
 	client *armcompute.VirtualMachinesClient
 }
 
-func NewAzureProvider(cfg *config.Config) *AzureProvider {
+func NewAzureProvider(cfg *config.Config) (*AzureProvider, bool) {
 	cred, err := azidentity.NewClientSecretCredential(cfg.AzureCreds.TenantID, cfg.AzureCreds.ClientID, cfg.AzureCreds.ClientSecret, nil)
 	if err != nil {
 		fmt.Printf("Failed to active Azure provider. Will continue without it. Error: %v\r\n", err)
-		return nil
+		return nil, false
 	}
 	subscriptionID := cfg.AzureCreds.SubscriptionID
 	if subscriptionID == "" {
@@ -29,7 +29,7 @@ func NewAzureProvider(cfg *config.Config) *AzureProvider {
 	if err != nil {
 		panic(err)
 	}
-	return &AzureProvider{client: client}
+	return &AzureProvider{client: client}, true
 }
 
 func (p *AzureProvider) ListVMs() ([]models.VM, error) {

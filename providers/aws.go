@@ -16,16 +16,16 @@ type AWSProvider struct {
 	client *ec2.EC2
 }
 
-func NewAWSProvider(cfg *config.Config) *AWSProvider {
+func NewAWSProvider(cfg *config.Config) (*AWSProvider, bool) {
 	sess, err := session.NewSession(&aws.Config{
 		Region:      aws.String(cfg.AWSCreds.Region),
 		Credentials: credentials.NewStaticCredentials(cfg.AWSCreds.AccessKey, cfg.AWSCreds.SecretKey, ""),
 	})
 	if err != nil {
 		fmt.Printf("Failed to active AWS provider. Will continue without it. Error: %v\r\n", err)
-		return nil
+		return nil, false
 	}
-	return &AWSProvider{client: ec2.New(sess)}
+	return &AWSProvider{client: ec2.New(sess)}, true
 }
 
 func (p *AWSProvider) ListVMs() ([]models.VM, error) {
