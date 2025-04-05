@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"cloudpulse/config"
+	"github.com/fuddata/anyvm/config"
 
 	"github.com/golang-jwt/jwt/v4"
 )

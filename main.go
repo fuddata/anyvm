@@ -4,10 +4,10 @@ import (
 	"log"
 	"net/http"
 
-	"cloudpulse/config"
-	"cloudpulse/handlers"
-	"cloudpulse/middleware"
-	"cloudpulse/providers"
+	"github.com/fuddata/anyvm/config"
+	"github.com/fuddata/anyvm/handlers"
+	"github.com/fuddata/anyvm/middleware"
+	"github.com/fuddata/anyvm/providers"
 
 	"github.com/gorilla/mux"
 )

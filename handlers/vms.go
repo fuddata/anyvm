@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"strings"
 
-	"cloudpulse/models"
-	"cloudpulse/providers"
+	"github.com/fuddata/anyvm/models"
+	"github.com/fuddata/anyvm/providers"
 )
 
 func ListVMsHandler(cm *providers.CloudManager) http.HandlerFunc {

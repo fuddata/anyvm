@@ -1,9 +1,10 @@
 package providers
 
 import (
-	"cloudpulse/config"
-	"cloudpulse/models"
 	"context"
+
+	"github.com/fuddata/anyvm/config"
+	"github.com/fuddata/anyvm/models"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute"

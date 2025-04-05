@@ -1,6 +1,6 @@
 package providers
 
-import "cloudpulse/models"
+import "github.com/fuddata/anyvm/models"
 
 type CloudProvider interface {
 	ListVMs() ([]models.VM, error)

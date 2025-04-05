@@ -1,8 +1,8 @@
 package providers
 
 import (
-	"cloudpulse/config"
-	"cloudpulse/models"
+	"github.com/fuddata/anyvm/config"
+	"github.com/fuddata/anyvm/models"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"

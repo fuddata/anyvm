@@ -3,8 +3,8 @@ package providers
 import (
 	"context"
 
-	"cloudpulse/config"
-	"cloudpulse/models"
+	"github.com/fuddata/anyvm/config"
+	"github.com/fuddata/anyvm/models"
 
 	"google.golang.org/api/compute/v1"
 	"google.golang.org/api/option"
