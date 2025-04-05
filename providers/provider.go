@@ -17,7 +17,9 @@ func NewCloudManager() *CloudManager {
 }
 
 func (cm *CloudManager) RegisterProvider(name string, provider CloudProvider) {
-	cm.providers[name] = provider
+	if provider != nil {
+		cm.providers[name] = provider
+	}
 }
 
 func (cm *CloudManager) GetProvider(name string) CloudProvider {

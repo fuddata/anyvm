@@ -6,7 +6,6 @@ import (
 
 	"github.com/fuddata/anyvm/config"
 	"github.com/fuddata/anyvm/handlers"
-	"github.com/fuddata/anyvm/middleware"
 	"github.com/fuddata/anyvm/providers"
 
 	"github.com/gorilla/mux"
@@ -18,6 +17,7 @@ func main() {
 
 	// Initialize cloud manager
 	cm := providers.NewCloudManager()
+
 	cm.RegisterProvider("azure", providers.NewAzureProvider(cfg))
 	cm.RegisterProvider("aws", providers.NewAWSProvider(cfg))
 	cm.RegisterProvider("gcp", providers.NewGCPProvider(cfg))
@@ -27,7 +27,10 @@ func main() {
 
 	// API routes with auth middleware
 	api := r.PathPrefix("/api/v1").Subrouter()
-	api.Use(middleware.AuthMiddleware)
+
+	// FixMe: Enable authentication
+	// api.Use(middleware.AuthMiddleware)
+
 	api.HandleFunc("/vms", handlers.ListVMsHandler(cm)).Methods("GET")
 
 	// Start server

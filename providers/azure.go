@@ -2,6 +2,7 @@ package providers
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/fuddata/anyvm/config"
 	"github.com/fuddata/anyvm/models"
@@ -17,7 +18,8 @@ type AzureProvider struct {
 func NewAzureProvider(cfg *config.Config) *AzureProvider {
 	cred, err := azidentity.NewClientSecretCredential(cfg.AzureCreds.TenantID, cfg.AzureCreds.ClientID, cfg.AzureCreds.ClientSecret, nil)
 	if err != nil {
-		panic(err) // In production, handle gracefully
+		fmt.Printf("Failed to active Azure provider. Will continue without it. Error: %v\r\n", err)
+		return nil
 	}
 	subscriptionID := cfg.AzureCreds.SubscriptionID
 	if subscriptionID == "" {

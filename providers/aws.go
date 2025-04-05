@@ -1,6 +1,8 @@
 package providers
 
 import (
+	"fmt"
+
 	"github.com/fuddata/anyvm/config"
 	"github.com/fuddata/anyvm/models"
 
@@ -20,7 +22,8 @@ func NewAWSProvider(cfg *config.Config) *AWSProvider {
 		Credentials: credentials.NewStaticCredentials(cfg.AWSCreds.AccessKey, cfg.AWSCreds.SecretKey, ""),
 	})
 	if err != nil {
-		panic(err)
+		fmt.Printf("Failed to active AWS provider. Will continue without it. Error: %v\r\n", err)
+		return nil
 	}
 	return &AWSProvider{client: ec2.New(sess)}
 }

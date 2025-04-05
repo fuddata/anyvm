@@ -2,6 +2,7 @@ package providers
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/fuddata/anyvm/config"
 	"github.com/fuddata/anyvm/models"
@@ -19,7 +20,8 @@ func NewGCPProvider(cfg *config.Config) *GCPProvider {
 	ctx := context.Background()
 	client, err := compute.NewService(ctx, option.WithCredentialsFile(cfg.GCPCreds.CredentialsFile))
 	if err != nil {
-		panic(err)
+		fmt.Printf("Failed to active GCP provider. Will continue without it. Error: %v\r\n", err)
+		return nil
 	}
 	return &GCPProvider{client: client, projectID: cfg.GCPCreds.ProjectID}
 }
