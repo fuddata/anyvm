@@ -11,9 +11,10 @@ type Config struct {
 }
 
 type AzureCredentials struct {
-	TenantID     string
-	ClientID     string
-	ClientSecret string
+	TenantID       string
+	ClientID       string
+	ClientSecret   string
+	SubscriptionID string // Added subscription ID for Azure
 }
 
 type AWSCredentials struct {
@@ -32,9 +33,10 @@ func LoadConfig() *Config {
 		Port:      getEnv("PORT", "8080"),
 		JWTSecret: getEnv("JWT_SECRET", "your-secret-key"),
 		AzureCreds: AzureCredentials{
-			TenantID:     getEnv("AZURE_TENANT_ID", ""),
-			ClientID:     getEnv("AZURE_CLIENT_ID", ""),
-			ClientSecret: getEnv("AZURE_CLIENT_SECRET", ""),
+			TenantID:       getEnv("AZURE_TENANT_ID", ""),
+			ClientID:       getEnv("AZURE_CLIENT_ID", ""),
+			ClientSecret:   getEnv("AZURE_CLIENT_SECRET", ""),
+			SubscriptionID: getEnv("AZURE_SUBSCRIPTION_ID", ""), // Load subscription ID from env
 		},
 		AWSCreds: AWSCredentials{
 			AccessKey: getEnv("AWS_ACCESS_KEY", ""),

@@ -1,13 +1,12 @@
 package providers
 
 import (
-	"context"
-
 	"cloudpulse/config"
 	"cloudpulse/models"
+	"context"
 
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
-	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanagement/armcompute"
+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute"
 )
 
 type AzureProvider struct {
@@ -19,7 +18,11 @@ func NewAzureProvider(cfg *config.Config) *AzureProvider {
 	if err != nil {
 		panic(err) // In production, handle gracefully
 	}
-	client, err := armcompute.NewVirtualMachinesClient("<your-subscription-id>", cred, nil)
+	subscriptionID := cfg.AzureCreds.SubscriptionID
+	if subscriptionID == "" {
+		panic("Azure subscription ID is not provided")
+	}
+	client, err := armcompute.NewVirtualMachinesClient(subscriptionID, cred, nil)
 	if err != nil {
 		panic(err)
 	}
