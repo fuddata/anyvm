@@ -31,6 +31,10 @@ func main() {
 		cm.RegisterProvider("gcp", gcpProvider)
 	}
 
+	hypervProvider, hypervEnable := providers.NewHyperVProvider(cfg)
+	if hypervEnable {
+		cm.RegisterProvider("hyperv", hypervProvider)
+	}
 	nutanixProvider, nutanixEnable := providers.NewNutanixProvider(cfg)
 	if nutanixEnable {
 		cm.RegisterProvider("nutanix", nutanixProvider)
