@@ -57,6 +57,7 @@ func main() {
 	// FixMe: Enable authentication
 	// api.Use(middleware.AuthMiddleware)
 
+	api.HandleFunc("/vms", handlers.CreateVMHandler(cm)).Methods("POST")
 	api.HandleFunc("/vms", handlers.ListVMsHandler(cm)).Methods("GET")
 
 	// Start server

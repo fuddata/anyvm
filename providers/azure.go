@@ -55,3 +55,20 @@ func (p *AzureProvider) ListVMs() ([]models.VM, error) {
 	}
 	return vms, nil
 }
+
+// CreateVM creates a new virtual machine in the specified resource group.
+// The caller must supply the VM parameters (of type armcompute.VirtualMachine).
+func (p *AzureProvider) CreateVM(ctx context.Context, resourceGroupName, vmName string, parameters armcompute.VirtualMachine) error {
+	poller, err := p.client.BeginCreateOrUpdate(ctx, resourceGroupName, vmName, parameters, nil)
+	if err != nil {
+		return fmt.Errorf("failed to start VM creation: %w", err)
+	}
+
+	// FixMe: We might need to use bigger value in here?
+	// https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/azcore@v1.17.0/runtime#PollUntilDoneOptions
+	_, err = poller.PollUntilDone(ctx, nil)
+	if err != nil {
+		return fmt.Errorf("failed to create VM: %w", err)
+	}
+	return nil
+}
