@@ -5,6 +5,7 @@ go 1.24.2
 require (
 	github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.8.2
 	github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute v1.0.0
+	github.com/Telmate/proxmox-api-go v0.0.0-20250326210034-2dd4b9b7f48a
 	github.com/aws/aws-sdk-go v1.55.6
 	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/gorilla/mux v1.8.1

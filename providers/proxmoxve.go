@@ -1,51 +1,79 @@
 package providers
 
 import (
-	"errors"
+	"context"
+	"crypto/tls"
 	"fmt"
+	"net/http"
 	"os"
+	"strconv"
 
+	"github.com/Telmate/proxmox-api-go/proxmox"
 	"github.com/fuddata/anyvm/models"
 )
 
 type ProxmoxVEProvider struct {
-	apiURL   string
-	username string
-	password string
+	client *proxmox.Client
+	node   string
 }
 
 func NewProxmoxVEProvider(cfg interface{}) (*ProxmoxVEProvider, bool) {
-	// For simplicity, credentials are loaded directly from environment variables.
 	apiURL := os.Getenv("PROXMOX_API_URL")
 	username := os.Getenv("PROXMOX_USERNAME")
 	password := os.Getenv("PROXMOX_PASSWORD")
+	node := os.Getenv("PROXMOX_NODE") // This must be specified
 
-	if apiURL == "" || username == "" || password == "" {
-		fmt.Printf("Proxmox credentials not configured. Will continue without it.\r\n")
+	if apiURL == "" || username == "" || password == "" || node == "" {
+		fmt.Printf("ProxmoxVE credentials not configured. Will continue without it.\r\n")
+		return nil, false
+	}
+
+	// Create an HTTP client for use by the Proxmox client.
+	httpClient := &http.Client{}
+
+	// Use default TLS configuration (nil means use the default)
+	tlsConfig := tls.Config{
+		InsecureSkipVerify: true,
+	}
+
+	// For Telmate's NewClient, we need: (apiURL, *http.Client, realm, *tls.Config, ticket, port)
+	// Use an empty realm and ticket. Typical port for Proxmox is 8006.
+	client, err := proxmox.NewClient(apiURL, httpClient, "", &tlsConfig, "", 30)
+	if err != nil {
+		panic(err)
+
+	}
+
+	// Login using a context. The fourth parameter (OTP) is empty.
+	err = client.Login(context.Background(), username, password, "")
+	if err != nil {
+		fmt.Printf("ProxmoxVE login failed. Will continue without it. Error: %v\r\n", err)
 		return nil, false
 	}
 
 	return &ProxmoxVEProvider{
-		apiURL:   apiURL,
-		username: username,
-		password: password,
+		client: client,
+		node:   node,
 	}, true
 }
 
 func (p *ProxmoxVEProvider) ListVMs() ([]models.VM, error) {
-	// Stub implementation. In production, implement API calls to ProxmoxVE.
-	if p.apiURL == "" || p.username == "" || p.password == "" {
-		return nil, errors.New("Proxmox credentials not configured")
+	// Use ListGuests to get the list of VMs for the specified node.
+	guests, err := proxmox.ListGuests(context.Background(), p.client)
+	if err != nil {
+		return nil, err
 	}
 
-	vms := []models.VM{
-		{
-			ID:       "pmx-001",
-			Name:     "ProxmoxVM1",
+	var vms []models.VM
+	for _, guest := range guests {
+		vmID := strconv.FormatUint(uint64(guest.Id), 10)
+		vms = append(vms, models.VM{
+			ID:       vmID,
+			Name:     guest.Name,
 			Provider: "proxmoxve",
-			Region:   "local",
-			Status:   "running",
-		},
+			Region:   p.node,
+			Status:   guest.Status,
+		})
 	}
 	return vms, nil
 }
