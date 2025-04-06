@@ -2,7 +2,6 @@ package providers
 
 import (
 	"context"
-	"crypto/tls"
 	"fmt"
 	"net/http"
 	"os"
@@ -31,14 +30,9 @@ func NewProxmoxVEProvider(cfg interface{}) (*ProxmoxVEProvider, bool) {
 	// Create an HTTP client for use by the Proxmox client.
 	httpClient := &http.Client{}
 
-	// Use default TLS configuration (nil means use the default)
-	tlsConfig := tls.Config{
-		InsecureSkipVerify: true,
-	}
-
 	// For Telmate's NewClient, we need: (apiURL, *http.Client, realm, *tls.Config, ticket, port)
 	// Use an empty realm and ticket. Typical port for Proxmox is 8006.
-	client, err := proxmox.NewClient(apiURL, httpClient, "", &tlsConfig, "", 30)
+	client, err := proxmox.NewClient(apiURL, httpClient, "", nil, "", 30)
 	if err != nil {
 		panic(err)
 
