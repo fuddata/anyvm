@@ -32,6 +32,7 @@ func NewAzureProvider(cfg *config.Config) (*AzureProvider, bool) {
 	return &AzureProvider{client: client}, true
 }
 
+// GET https://management.azure.com/subscriptions/<subcription id>/providers/Microsoft.Compute/virtualMachines?api-version=2022-03-01
 func (p *AzureProvider) ListVMs() ([]models.VM, error) {
 	ctx := context.Background()
 	var vms []models.VM

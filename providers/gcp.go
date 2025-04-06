@@ -26,6 +26,7 @@ func NewGCPProvider(cfg *config.Config) (*GCPProvider, bool) {
 	return &GCPProvider{client: client, projectID: cfg.GCPCreds.ProjectID}, true
 }
 
+// GET  https://compute.googleapis.com/compute/v1/projects/<project id>/aggregated/instances?alt=json&prettyPrint=false
 func (p *GCPProvider) ListVMs() ([]models.VM, error) {
 	ctx := context.Background()
 	var vms []models.VM
