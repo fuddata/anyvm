@@ -8,6 +8,7 @@ require (
 	github.com/aws/aws-sdk-go v1.55.6
 	github.com/golang-jwt/jwt/v4 v4.5.2
 	github.com/gorilla/mux v1.8.1
+	github.com/vmware/govmomi v0.49.0
 	google.golang.org/api v0.228.0
 )
 

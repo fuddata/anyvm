@@ -31,6 +31,19 @@ func main() {
 		cm.RegisterProvider("gcp", gcpProvider)
 	}
 
+	nutanixProvider, nutanixEnable := providers.NewNutanixProvider(cfg)
+	if nutanixEnable {
+		cm.RegisterProvider("nutanix", nutanixProvider)
+	}
+	proxmoxProvider, proxmoxEnable := providers.NewProxmoxVEProvider(cfg)
+	if proxmoxEnable {
+		cm.RegisterProvider("proxmox", proxmoxProvider)
+	}
+	vsphereProvider, vsphereEnable := providers.NewVSphereProvider(cfg)
+	if vsphereEnable {
+		cm.RegisterProvider("vsphere", vsphereProvider)
+	}
+
 	// Set up router
 	r := mux.NewRouter()
 
