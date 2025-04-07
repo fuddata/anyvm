@@ -102,7 +102,7 @@ func LoadConfig() *Config {
 				CustomImages: map[string]string{
 					"ubuntu24": "ami-0644165ab979df02d",
 				},
-				DefaultKeyName:          getEnv("AWS_DEFAULT_KEYNAME", "default-key"),
+				DefaultKeyName:          getEnv("AWS_DEFAULT_KEYNAME", "testkey345"),
 				DefaultSecurityGroupIDs: []string{getEnv("AWS_DEFAULT_SECURITY_GROUP", "sg-01234567")},
 				DefaultRegion:           getEnv("AWS_DEFAULT_REGION", "eu-west-3"),
 			},
