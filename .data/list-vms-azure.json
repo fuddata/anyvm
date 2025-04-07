@@ -1,0 +1,65 @@
+{
+    "value": [
+        {
+            "name": "myNewAzureVM",
+            "id": "/subscriptions/54e30869-75a2-47ed-8b32-1057e61707f0/resourceGroups/SCRIPT-TEST/providers/Microsoft.Compute/virtualMachines/myNewAzureVM",
+            "type": "Microsoft.Compute/virtualMachines",
+            "location": "westeurope",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_DS1_v2"
+                },
+                "provisioningState": "Succeeded",
+                "vmId": "69c3b95d-0b82-45bf-b763-04f182ba54d2",
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "Canonical",
+                        "offer": "UbuntuServer",
+                        "sku": "18.04-LTS",
+                        "version": "latest",
+                        "exactVersion": "18.04.202401161"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "myNewAzureVM_OsDisk_1_f16b1dd602754049a6c9013971e4fa65",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "Premium_LRS",
+                            "id": "/subscriptions/54e30869-75a2-47ed-8b32-1057e61707f0/resourceGroups/script-test/providers/Microsoft.Compute/disks/myNewAzureVM_OsDisk_1_f16b1dd602754049a6c9013971e4fa65"
+                        },
+                        "deleteOption": "Detach",
+                        "diskSizeGB": 30
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "myNewAzureVM",
+                    "adminUsername": "azureuser",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": false,
+                        "provisionVMAgent": true,
+                        "patchSettings": {
+                            "patchMode": "ImageDefault",
+                            "assessmentMode": "ImageDefault"
+                        }
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true,
+                    "requireGuestProvisionSignal": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "/subscriptions/54e30869-75a2-47ed-8b32-1057e61707f0/resourceGroups/script-test/providers/Microsoft.Network/networkInterfaces/myNIC",
+                            "properties": {
+                                "primary": true
+                            }
+                        }
+                    ]
+                },
+                "timeCreated": "2025-04-07T06:09:05.5225578+00:00"
+            }
+        }
+    ]
+}

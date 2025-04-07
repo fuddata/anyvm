@@ -1,0 +1,24 @@
+{
+    "data": [
+        {
+            "mem": 697872384,
+            "status": "running",
+            "diskwrite": 3636666368,
+            "netout": 3760,
+            "cpu": 0.00491897854411228,
+            "maxmem": 4294967296,
+            "id": "qemu/100",
+            "diskread": 4648466856,
+            "uptime": 81591,
+            "node": "pve",
+            "maxcpu": 1,
+            "name": "prox-test-123",
+            "maxdisk": 53687091200,
+            "template": 0,
+            "disk": 0,
+            "type": "qemu",
+            "netin": 296483,
+            "vmid": 100
+        }
+    ]
+}
