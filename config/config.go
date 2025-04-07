@@ -108,12 +108,12 @@ func LoadConfig() *Config {
 			},
 			GCP: GCPMapping{
 				CustomVMSizes: map[string]string{
-					"small":  "n1-standard-1",
-					"medium": "n1-standard-2",
-					"large":  "n1-standard-4",
+					"small":  "t2d-standard-1",
+					"medium": "t2d-standard-2",
+					"large":  "t2d-standard-4",
 				},
 				CustomImages: map[string]string{
-					"ubuntu24": "projects/ubuntu-os-cloud/global/images/family/ubuntu-2404-lts",
+					"ubuntu24": "projects/ubuntu-os-cloud/global/images/ubuntu-2404-noble-amd64-v20250313",
 				},
 				DefaultZone:    getEnv("GCP_DEFAULT_ZONE", "europe-west9-c"),
 				DefaultProject: getEnv("GCP_DEFAULT_PROJECT", ""),

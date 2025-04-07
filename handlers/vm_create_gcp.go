@@ -20,14 +20,27 @@ func createGCPVM(ctx context.Context, req CreateVMRequest, cm *providers.CloudMa
 	if !ok {
 		return fmt.Errorf("invalid GCP provider instance")
 	}
+
+	// Map custom machine type.
 	actualMachineType := req.MachineType
-	if mapped, ok := cfg.Mappings.GCP.CustomVMSizes[strings.ToLower(req.MachineType)]; ok {
+	if mapped, ok := cfg.Mappings.GCP.CustomVMSizes[strings.ToLower(req.MachineType)]; ok && req.MachineType != "" {
 		actualMachineType = mapped
 	}
+	// Use default if not provided.
+	if actualMachineType == "" {
+		// Assuming a default exists in the mapping for "small"
+		actualMachineType = cfg.Mappings.GCP.CustomVMSizes["small"]
+	}
+
+	// Map custom source image.
 	actualSourceImage := req.SourceImage
-	if mapped, ok := cfg.Mappings.GCP.CustomImages[strings.ToLower(req.SourceImage)]; ok {
+	if actualSourceImage == "" {
+		// Use default key "ubuntu18" if not provided.
+		actualSourceImage = cfg.Mappings.GCP.CustomImages["ubuntu24"]
+	} else if mapped, ok := cfg.Mappings.GCP.CustomImages[strings.ToLower(req.SourceImage)]; ok {
 		actualSourceImage = mapped
 	}
+
 	zone := req.Zone
 	if zone == "" {
 		zone = cfg.Mappings.GCP.DefaultZone
@@ -37,11 +50,13 @@ func createGCPVM(ctx context.Context, req CreateVMRequest, cm *providers.CloudMa
 		projectID = cfg.Mappings.GCP.DefaultProject
 	}
 	instance := &compute.Instance{
-		Name:        req.VMName,
+		Name: req.VMName,
+		// MachineType must be in the full URL format.
 		MachineType: fmt.Sprintf("zones/%s/machineTypes/%s", zone, actualMachineType),
 		Disks: []*compute.AttachedDisk{
 			{
-				Boot: true,
+				Boot:       true,
+				AutoDelete: true,
 				InitializeParams: &compute.AttachedDiskInitializeParams{
 					SourceImage: actualSourceImage,
 					DiskSizeGb:  10,
