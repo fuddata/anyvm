@@ -12,7 +12,7 @@ import (
 )
 
 type GCPProvider struct {
-	client    *compute.Service
+	Client    *compute.Service
 	projectID string
 }
 
@@ -23,7 +23,7 @@ func NewGCPProvider(cfg *config.Config) (*GCPProvider, bool) {
 		fmt.Printf("Failed to active GCP provider. Will continue without it. Error: %v\r\n", err)
 		return nil, false
 	}
-	return &GCPProvider{client: client, projectID: cfg.GCPCreds.ProjectID}, true
+	return &GCPProvider{Client: client, projectID: cfg.GCPCreds.ProjectID}, true
 }
 
 // GET  https://compute.googleapis.com/compute/v1/projects/<project id>/aggregated/instances?alt=json&prettyPrint=false
@@ -31,7 +31,7 @@ func (p *GCPProvider) ListVMs() ([]models.VM, error) {
 	ctx := context.Background()
 	var vms []models.VM
 
-	req := p.client.Instances.AggregatedList(p.projectID)
+	req := p.Client.Instances.AggregatedList(p.projectID)
 	if err := req.Pages(ctx, func(page *compute.InstanceAggregatedList) error {
 		for _, instances := range page.Items {
 			for _, inst := range instances.Instances {

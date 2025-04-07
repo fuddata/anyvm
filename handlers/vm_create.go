@@ -5,27 +5,45 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/fuddata/anyvm/config"
 	"github.com/fuddata/anyvm/models"
 	"github.com/fuddata/anyvm/providers"
-
-	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/compute/armcompute"
+	// Azure SDK helpers
+	// AWS SDK
+	// GCP SDK
 )
 
-// CreateVMRequest defines the request payload for creating a VM.
+// CreateVMRequest defines the unified request payload for creating a VM.
 type CreateVMRequest struct {
-	Provider          string `json:"provider"`
-	ResourceGroupName string `json:"resourceGroupName"`
-	VMName            string `json:"vmName"`
-	Location          string `json:"location"`
-	VMSize            string `json:"vmSize"`
-	AdminUsername     string `json:"adminUsername"`
-	AdminPassword     string `json:"adminPassword"`
-	NICID             string `json:"nicId"`
+	Provider string `json:"provider"`
+	VMName   string `json:"vmName"`
+
+	// Azure-specific fields
+	ResourceGroupName string `json:"resourceGroupName,omitempty"`
+	Location          string `json:"location,omitempty"`
+	VMSize            string `json:"vmSize,omitempty"`
+	AdminUsername     string `json:"adminUsername,omitempty"`
+	AdminPassword     string `json:"adminPassword,omitempty"`
+	NICID             string `json:"nicId,omitempty"`
+	// (Optionally, you can allow specifying an image key)
+
+	// AWS-specific fields
+	ImageID          string   `json:"imageId,omitempty"`
+	InstanceType     string   `json:"instanceType,omitempty"`
+	KeyName          string   `json:"keyName,omitempty"`
+	SecurityGroupIDs []string `json:"securityGroupIds,omitempty"`
+
+	// GCP-specific fields
+	ProjectID   string `json:"projectId,omitempty"`
+	Zone        string `json:"zone,omitempty"`
+	MachineType string `json:"machineType,omitempty"`
+	SourceImage string `json:"sourceImage,omitempty"`
 }
 
-// CreateVMHandler handles VM creation requests.
-// It only supports Azure; for other providers it returns an error.
-func CreateVMHandler(cm *providers.CloudManager) http.HandlerFunc {
+// CreateVMHandler handles VM creation requests for Azure, AWS, and GCP.
+// It uses unified mappings from the configuration to convert custom identifiers
+// to the actual cloud-specific values.
+func CreateVMHandler(cm *providers.CloudManager, cfg *config.Config) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
@@ -39,88 +57,27 @@ func CreateVMHandler(cm *providers.CloudManager) http.HandlerFunc {
 			return
 		}
 
-		// Only Azure is supported for VM creation.
-		if strings.ToLower(req.Provider) != "azure" {
+		provider := strings.ToLower(req.Provider)
+		ctx := r.Context()
+		var err error
+
+		switch provider {
+		case "azure":
+			err = createAzureVM(ctx, req, cm, cfg)
+		case "aws":
+			err = createAWSVM(ctx, req, cm, cfg)
+		case "gcp":
+			err = createGCPVM(ctx, req, cm, cfg)
+		default:
 			w.WriteHeader(http.StatusBadRequest)
 			json.NewEncoder(w).Encode(models.APIResponse{
 				Success: false,
-				Error:   "VM creation is only supported for Azure",
+				Error:   "VM creation is only supported for Azure, AWS, and GCP",
 			})
 			return
 		}
 
-		// Retrieve the Azure provider from the CloudManager.
-		provider := cm.GetProvider("azure")
-		if provider == nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(models.APIResponse{
-				Success: false,
-				Error:   "Azure provider not available",
-			})
-			return
-		}
-
-		azureProvider, ok := provider.(*providers.AzureProvider)
-		if !ok {
-			w.WriteHeader(http.StatusInternalServerError)
-			json.NewEncoder(w).Encode(models.APIResponse{
-				Success: false,
-				Error:   "Invalid Azure provider instance",
-			})
-			return
-		}
-
-		// FixMe: Read these from somewhere
-		// az vm image list-offers -l westeurope -p Canonical
-		// az vm image list-skus -l westeurope -p Canonical -f ubuntu-24_04-lts
-		publisher := "Canonical"
-		offer := "ubuntu-24_04-lts"
-		sku := "server"
-		version := "latest"
-
-		// Build the VM parameters.
-		vmSize := armcompute.VirtualMachineSizeTypes(req.VMSize)
-		createOption := armcompute.DiskCreateOptionTypesFromImage
-		vmParameters := armcompute.VirtualMachine{
-			Location: &req.Location,
-			Properties: &armcompute.VirtualMachineProperties{
-				HardwareProfile: &armcompute.HardwareProfile{
-					VMSize: &vmSize,
-				},
-				StorageProfile: &armcompute.StorageProfile{
-					ImageReference: &armcompute.ImageReference{
-						Publisher: &publisher,
-						Offer:     &offer,
-						SKU:       &sku,
-						Version:   &version,
-					},
-					OSDisk: &armcompute.OSDisk{
-						CreateOption: &createOption,
-						// DiskSizeGB:   to.Int32Ptr(30),
-					},
-				},
-				OSProfile: &armcompute.OSProfile{
-					ComputerName:  &req.VMName,
-					AdminUsername: &req.AdminUsername,
-					AdminPassword: &req.AdminPassword,
-				},
-				NetworkProfile: &armcompute.NetworkProfile{
-					NetworkInterfaces: []*armcompute.NetworkInterfaceReference{
-						{
-							ID: &req.NICID,
-							/*
-								Properties: &armcompute.NetworkInterfaceReferenceProperties{
-									Primary: to.BoolPtr(true),
-								},
-							*/
-						},
-					},
-				},
-			},
-		}
-
-		// Call the Azure provider's CreateVM function.
-		if err := azureProvider.CreateVM(r.Context(), req.ResourceGroupName, req.VMName, vmParameters); err != nil {
+		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			json.NewEncoder(w).Encode(models.APIResponse{
 				Success: false,

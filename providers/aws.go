@@ -13,7 +13,7 @@ import (
 )
 
 type AWSProvider struct {
-	client *ec2.EC2
+	Client *ec2.EC2
 }
 
 func NewAWSProvider(cfg *config.Config) (*AWSProvider, bool) {
@@ -25,13 +25,13 @@ func NewAWSProvider(cfg *config.Config) (*AWSProvider, bool) {
 		fmt.Printf("Failed to active AWS provider. Will continue without it. Error: %v\r\n", err)
 		return nil, false
 	}
-	return &AWSProvider{client: ec2.New(sess)}, true
+	return &AWSProvider{Client: ec2.New(sess)}, true
 }
 
 // POST https://ec2.eu-west-3.amazonaws.com
 // Action=DescribeInstances&Version=2016-11-15
 func (p *AWSProvider) ListVMs() ([]models.VM, error) {
-	result, err := p.client.DescribeInstances(nil)
+	result, err := p.Client.DescribeInstances(nil)
 	if err != nil {
 		return nil, err
 	}
