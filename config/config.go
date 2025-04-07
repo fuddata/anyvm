@@ -30,14 +30,14 @@ type CloudMappings struct {
 
 type AzureMapping struct {
 	CustomVMSizes        map[string]string `json:"customVmSizes"`        // e.g. "small": "Standard_DS1_v2"
-	CustomImages         map[string]string `json:"customImages"`         // e.g. "ubuntu18": "Canonical:UbuntuServer:18.04-LTS:latest"
+	CustomImages         map[string]string `json:"customImages"`         // e.g. "ubuntu24": "Canonical:UbuntuServer:18.04-LTS:latest"
 	DefaultResourceGroup string            `json:"defaultResourceGroup"` // fallback resource group name
 	DefaultLocation      string            `json:"defaultLocation"`      // fallback location (e.g. "eastus")
 }
 
 type AWSMapping struct {
 	CustomVMSizes           map[string]string `json:"customVmSizes"` // e.g. "small": "t2.micro"
-	CustomImages            map[string]string `json:"customImages"`  // e.g. "ubuntu18": "ami-0abcdef1234567890"
+	CustomImages            map[string]string `json:"customImages"`  // e.g. "ubuntu24": "ami-0abcdef1234567890"
 	DefaultKeyName          string            `json:"defaultKeyName"`
 	DefaultSecurityGroupIDs []string          `json:"defaultSecurityGroupIds"`
 	DefaultRegion           string            `json:"defaultRegion"`
@@ -45,7 +45,7 @@ type AWSMapping struct {
 
 type GCPMapping struct {
 	CustomVMSizes  map[string]string `json:"customVmSizes"` // e.g. "small": "n1-standard-1"
-	CustomImages   map[string]string `json:"customImages"`  // e.g. "ubuntu18": "projects/ubuntu-os-cloud/global/images/family/ubuntu-1804-lts"
+	CustomImages   map[string]string `json:"customImages"`  // e.g. "ubuntu24": "projects/ubuntu-os-cloud/global/images/family/ubuntu-1804-lts"
 	DefaultZone    string            `json:"defaultZone"`
 	DefaultProject string            `json:"defaultProject"`
 }
@@ -88,10 +88,10 @@ func LoadConfig() *Config {
 					"large":  "Standard_DS3_v2",
 				},
 				CustomImages: map[string]string{
-					"ubuntu18": "Canonical:UbuntuServer:18.04-LTS:latest",
+					"ubuntu24": "Canonical:ubuntu-24_04-lts:server:latest",
 				},
-				DefaultResourceGroup: getEnv("AZURE_DEFAULT_RESOURCE_GROUP", "default-rg"),
-				DefaultLocation:      getEnv("AZURE_DEFAULT_LOCATION", "eastus"),
+				DefaultResourceGroup: getEnv("AZURE_DEFAULT_RESOURCE_GROUP", "script-test"),
+				DefaultLocation:      getEnv("AZURE_DEFAULT_LOCATION", "westeurope"),
 			},
 			AWS: AWSMapping{
 				CustomVMSizes: map[string]string{
@@ -100,11 +100,11 @@ func LoadConfig() *Config {
 					"large":  "t2.medium",
 				},
 				CustomImages: map[string]string{
-					"ubuntu18": "ami-0abcdef1234567890",
+					"ubuntu24": "ami-0644165ab979df02d",
 				},
 				DefaultKeyName:          getEnv("AWS_DEFAULT_KEYNAME", "default-key"),
 				DefaultSecurityGroupIDs: []string{getEnv("AWS_DEFAULT_SECURITY_GROUP", "sg-01234567")},
-				DefaultRegion:           getEnv("AWS_DEFAULT_REGION", "us-east-1"),
+				DefaultRegion:           getEnv("AWS_DEFAULT_REGION", "eu-west-3"),
 			},
 			GCP: GCPMapping{
 				CustomVMSizes: map[string]string{
@@ -113,9 +113,9 @@ func LoadConfig() *Config {
 					"large":  "n1-standard-4",
 				},
 				CustomImages: map[string]string{
-					"ubuntu18": "projects/ubuntu-os-cloud/global/images/family/ubuntu-1804-lts",
+					"ubuntu24": "projects/ubuntu-os-cloud/global/images/family/ubuntu-2404-lts",
 				},
-				DefaultZone:    getEnv("GCP_DEFAULT_ZONE", "us-central1-a"),
+				DefaultZone:    getEnv("GCP_DEFAULT_ZONE", "europe-west9-c"),
 				DefaultProject: getEnv("GCP_DEFAULT_PROJECT", ""),
 			},
 		},
